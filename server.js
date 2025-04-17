@@ -1,6 +1,8 @@
+const http = require('http');
 const mysql = require('mysql'); 
 const express = require('express');
 const app = express();
+const { Server } = require('socket.io');
 
 const Database = require('./Database');
 
@@ -22,6 +24,21 @@ db.init();
 // Web serving
 app.use(express.static(__dirname + '/public'));
 
-app.listen(8100, () => {
+const server = http.createServer(app);
+const io = new Server(server);
+
+io.on('connection', (socket) => {
+    console.log('New connection:', socket.id);
+  
+    socket.on('message', (msg) => {
+      console.log('Message:', msg);
+    });
+  
+    socket.on('disconnect', () => {
+      console.log('User disconnected:', socket.id);
+    });
+  });
+
+server.listen(8100, () => {
     console.log('Listening at http://localhost:8100/');
 });
