@@ -21,14 +21,23 @@ class Database {
                 const sql = fs.readFileSync('arlingtonorganicmarket.sql', 'utf8');
           
                 // Run SQL file (it should include CREATE DATABASE and other commands)
-                connection.query(sql, (err, results) => {
+                this.connection.query(sql, (err, results) => {
                   if (err) throw err;
-                  console.log(`Database "${this.dbName}" created from name.sql`);
+                  console.log(`Database "${this.dbName}" created from arlingtonorganicmarket.sql`);
                   this.use();
+                  this.createViews();
                 });
               }
             }
           );
+    }
+
+    createViews() {
+        const sql = fs.readFileSync('arlingtonorganicmarket.sql', 'utf8');
+        this.connection.query(sql, (err, results) => {
+            if (err) throw err;
+            console.log(`Views created from views.sql`);
+        });
     }
 
     use() {
