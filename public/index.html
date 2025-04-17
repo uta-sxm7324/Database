@@ -6,6 +6,7 @@
     <title>Product Management</title>
     <script src="/socket.io/socket.io.js"></script>
     <script src="socket.js"></script>
+    <script src="pageHandler.js"></script>
 </head>
 <body>
     <h2>Product Management</h2>
@@ -18,6 +19,11 @@
 
     <h3>Product List</h3>
     <ul id="productList"></ul>
+
+    <h3>Items</h3>
+    <div id="item">
+      
+    </div>
 </body>
 
 <script>
@@ -57,12 +63,4 @@
     x.innerHTML = "Sorry, no Web storage support!";
     }    
   </script>
-<html>
-    <head>
-        <title>Database</title>
-        <script src="/socket.io/socket.io.js"></script>
-    </head>
-    <body>
-        <p>Say hello to a database website</p>
-    </body>
 </html>

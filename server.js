@@ -30,8 +30,13 @@ const io = new Server(server);
 io.on('connection', (socket) => {
     console.log('New connection:', socket.id);
   
-    socket.on('message', (msg) => {
-      console.log('Message:', msg);
+    socket.on('getData', () => {
+        db.getTable("item", (err, data) => {
+            if (err) return console.log(err);
+            console.log('Sending data');
+            socket.emit('data','item',data);
+        });
+        
     });
   
     socket.on('disconnect', () => {

@@ -13,6 +13,7 @@ class Database {
           
               if (results.length > 0) {
                 console.log(`Database "${this.dbName}" exists. Using it`);
+                this.use();
               } else {
                 console.log(`Database "${this.dbName}" not found. Creating...`);
           
@@ -23,17 +24,39 @@ class Database {
                 connection.query(sql, (err, results) => {
                   if (err) throw err;
                   console.log(`Database "${this.dbName}" created from name.sql`);
+                  this.use();
                 });
               }
             }
           );
     }
 
-    getTable(table) {
-        this.connection.query("SELECT * FROM " + table, function (err, result) {
-            if (err) throw err;
-            console.log("Result: " + result);
-            return result;
+    use() {
+        this.connection.query(
+            'USE ' + this.dbName, (err, results) => {
+                if (err) throw err;
+                console.log("Using db!");
+            }
+        );
+    }
+
+    getTablePromise(table) {
+        return new Promise((resolve, reject) => {
+            this.connection.query("SELECT * FROM " + table, function (err, result) {
+                if (err) return reject(err);
+                //console.log("Result: ", result);
+                resolve(result);
+            });
+        });
+    }
+
+    getTable(table, callback) {
+        this.getTablePromise(table)
+        .then(result => {
+            callback(null, result);
+        })
+        .catch(err => {
+            callback(err, null);
         });
     }
 }
