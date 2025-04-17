@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="socket.js"></script>
+</head>
+<body>
+    <h2>Product Management</h2>
+    <h3>Add Product</h3>
+    <div id="x"></div>
+      <!--^ SHOULD BE DELETED IN FINAL ^-->
+    <input type="text" id="name" placeholder="Product Name"> 
+    <input type="text" id="vendorName" placeholder="Vendor Name"> 
+    <input type="text" id="address" placeholder="Address"> 
+    <input type="number" id="price" placeholder="Price"> 
+    <input type="number" id="quantity" placeholder="Quantity"> 
+    <button onclick="addProduct()" >Add Product</button>
+
+    <h3>Product List</h3>
+    <ul id="productList"></ul>
+</body>
+
+<script>
+    function addProduct() {
+      const name = document.getElementById("name").value.trim();
+      const vendorName = document.getElementById("vendorName").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const price = document.getElementById("price").value.trim();
+      const quantity = document.getElementById("quantity").value.trim();
+      
+
+      if (!name || !vendorName || !address || !price || !quantity) {
+        alert("Please fill out all fields.");
+        return;
+      }
+
+      const ul = document.getElementById("productList");
+      const li = document.createElement("li");
+      li.textContent = `${name} - ${vendorName} - ${address} - $${price} - ${quantity} units `;
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "Delete";
+      deleteBtn.style.marginLeft = "10px";
+      deleteBtn.onclick = () => {
+        ul.removeChild(li);
+      };
+
+      li.appendChild(deleteBtn);
+      ul.appendChild(li);
+
+      // Clear inputs
+      document.getElementById("name").value.trim();
+      document.getElementById("vendorName").value.trim();
+      document.getElementById("address").value.trim();
+      document.getElementById("price").value.trim();
+      document.getElementById("quantity").value.trim();
+    }
+    const x = document.getElementById("x");
+    if (typeof(Storage) !== "undefined") { //SHOULD BE DELETED IN FINAL
+    x.innerHTML = "Your browser supports Web storage!";
+    } else {
+    x.innerHTML = "Sorry, no Web storage support!";
+    }    
+  </script>
+<html>
+    <head>
+        <title>Database</title>
+        <script src="/socket.io/socket.io.js"></script>
+    </head>
+    <body>
+        <p>Say hello to a database website</p>
+    </body>
+</html>
