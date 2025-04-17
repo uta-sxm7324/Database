@@ -20,11 +20,22 @@
       <input type="text" id="category" placeholder="Category"> <!-- TODO: Make into a dropdown menu -->
       <button onclick="addProduct()" >Add Product</button>
 
+      <h3>Add Vendor</h3>
+      <input type="number" id="vendor-id" placeholder="Vendor ID"> 
+      <input type="text" id="vendor-name" placeholder="Vendor Name"> 
+      <input type="text" id="vendor-street" placeholder="Street">
+      <input type="text" id="vendor-city" placeholder="City"> 
+      <input type="text" id="vendor-state" placeholder="State"> 
+      <input type="number" id="vendor-zip" placeholder="ZipCode">
+      <button onclick="addVendor()" >Add Vendor</button>
+
       <h3>Product List</h3>
       <ul id="productList"></ul>
 
       <h3>Items</h3>
-      <div id="item">
+      <div id="item"></div>
+      <h3>Vendors</h3>
+      <div id="vendor"></div>
     </div>
   </body>
 </html>

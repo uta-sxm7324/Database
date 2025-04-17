@@ -42,3 +42,26 @@ function addProduct() {
     document.getElementById("price").value.trim();
     document.getElementById("quantity").value.trim();
   }
+
+  function addVendor() {
+    const vendorId = document.getElementById("vendor-id").value.trim();
+    const vendorName = document.getElementById("vendor-name").value.trim();
+    const vendorStreet = document.getElementById("vendor-street").value.trim();
+    const vendorCity = document.getElementById("vendor-city").value.trim();
+    const vendorState = document.getElementById("vendor-state").value.trim();
+    const vendorZip = document.getElementById("vendor-zip").value.trim();
+
+    if (!vendorId || !vendorName || !vendorStreet || !vendorCity || !vendorState || !vendorZip) {
+        alert("Please fill out all vendor fields.");
+        return;
+    }
+
+    sendNewVendor({
+        vendorId: vendorId,
+        vendorName: vendorName,
+        vendorStreet: vendorStreet,
+        vendorCity: vendorCity,
+        vendorState: vendorState,
+        vendorZip: vendorZip
+    });
+}

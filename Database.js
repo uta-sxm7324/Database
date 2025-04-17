@@ -72,6 +72,45 @@ class Database {
         });
     }
 
+    /* VENDOR json
+    {
+        vendorId: vendorId,
+        vendorName: vendorName,
+        vendorStreet: vendorStreet,
+        vendorCity: vendorCity,
+        vendorState: vendorState,
+        vendorZip: vendorZip
+    }
+    */
+    static insertItemPromise(json) {
+        const conn = Database.connection;
+
+        return new Promise((resolve, reject) => {
+            conn.query(
+                "INSERT INTO vendor (vId, Vname, Street, City, StateAb, ZipCode) VALUES (?, ?, ?, ?, ?, ?)",
+                [json.vendorId, json.vendorName, json.vendorStreet, json.vendorState, json.vendorZip],
+                (err) => {
+                    if (err) return reject(err);
+                    console.log('Vendor inserted');
+                    resolve();
+                }
+            );
+        })
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                conn.query(
+                    "INSERT INTO vendor_store (vId, sId) VALUES (?, ?)",
+                    [json.vendorId, 1],
+                    (err) => {
+                        if (err) return reject(err);
+                        console.log('vendor store related');
+                        resolve();
+                    }
+                );
+            });
+        })
+    }
+
     static insertItemPromise(json) {
         const conn = Database.connection;
 
@@ -125,6 +164,15 @@ class Database {
             .then(() => {
                 console.log('Item inserted!');
                 Database.getTable('item', callback);
+            })
+            .catch(err => callback(err, null));
+    }
+
+    static insertVendor(json, callback) {
+        Database.insertVendorPromise(json)
+            .then(() => {
+                console.log('Vendor inserted!');
+                Database.getTable('vendor', callback);
             })
             .catch(err => callback(err, null));
     }

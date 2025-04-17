@@ -34,8 +34,14 @@ io.on('connection', (socket) => {
     socket.on('getData', () => {
         Database.getTable("item", (err, data) => {
             if (err) return console.log(err);
-            console.log('Sending data');
+            console.log('Sending item data');
             socket.emit('data','item',data);
+        });
+
+        Database.getTable("vendor", (err, data) => {
+            if (err) return console.log(err);
+            console.log('Sending vendor data');
+            socket.emit('data','vendor',data);
         });
         
     });
@@ -50,6 +56,20 @@ io.on('connection', (socket) => {
                 console.log('Added item');
                 socket.emit('itemSuccess');
                 socket.emit('data','item',data);
+            }
+        })
+    });
+
+    socket.on('newVendor', (json) => {
+        Database.insertVendor(json, (err, data) => {
+            if (err) {
+                //Bad data (most likely duplicate id)
+                socket.emit('vendorError', err);
+
+            } else {
+                console.log('Added vendor');
+                socket.emit('vendorSuccess');
+                socket.emit('data','vendor',data);
             }
         })
     })

@@ -23,3 +23,7 @@ window.onload = function () {
 function sendNewItem(json) {
     socket.emit('newItem', json);
 }
+
+function sendNewVendor(json) {
+    socket.emit('newVendor',json);
+}
