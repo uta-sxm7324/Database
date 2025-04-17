@@ -18,8 +18,8 @@ con.connect(function(err) {
     console.log("Connected!");
 });
 
-const db = new Database(con);
-db.init();
+Database.connection = con;
+Database.init();
 
 
 // Web serving
@@ -32,7 +32,7 @@ io.on('connection', (socket) => {
     console.log('New connection:', socket.id);
   
     socket.on('getData', () => {
-        db.getTable("item", (err, data) => {
+        Database.getTable("item", (err, data) => {
             if (err) return console.log(err);
             console.log('Sending data');
             socket.emit('data','item',data);
@@ -40,9 +40,23 @@ io.on('connection', (socket) => {
         
     });
 
+    socket.on('newItem', (json) => {
+        Database.insertItem(json, (err, data) => {
+            if (err) {
+                //Bad data (most likely duplicate item)
+                socket.emit('itemError', err);
+
+            } else {
+                console.log('Added item');
+                socket.emit('itemSuccess');
+                socket.emit('data','item',data);
+            }
+        })
+    })
+
     socket.on('reset', () => {
         //Drop the database :)
-        db.reset((err) => {
+        Database.reset((err) => {
             if (err) return console.log(err);
         });
     })

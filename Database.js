@@ -1,94 +1,141 @@
 const fs = require('fs');
 
 class Database {
-    constructor(connection) {
-        this.connection = connection;
-        this.dbName = "arlingtonorganicmarket";
-    }
+    static connection;
+    static dbName = "arlingtonorganicmarket";
 
-    init() {
-        this.connection.query(
+    static init() {
+        const conn = Database.connection;
+        const dbName = Database.dbName;
+
+        conn.query(
             'SHOW DATABASES LIKE ?',
-            [this.dbName],
+            [dbName],
             (err, results) => {
-              if (err) throw err;
-          
-              if (results.length > 0) {
-                console.log(`Database "${this.dbName}" exists. Using it`);
-                this.use();
-              } else {
-                console.log(`Database "${this.dbName}" not found. Creating...`);
-          
-                // Read SQL file
-                const sql = fs.readFileSync('arlingtonorganicmarket.sql', 'utf8');
-          
-                // Run SQL file (it should include CREATE DATABASE and other commands)
-                this.connection.query(sql, (err, results) => {
-                  if (err) throw err;
-                  console.log(`Database "${this.dbName}" created from arlingtonorganicmarket.sql`);
-                  //this.use(); //added to sql already
-                  this.createViews();
-                });
-              }
+                if (err) throw err;
+
+                if (results.length > 0) {
+                    console.log(`Database "${dbName}" exists. Using it`);
+                    Database.use();
+                } else {
+                    console.log(`Database "${dbName}" not found. Creating...`);
+                    const sql = fs.readFileSync('arlingtonorganicmarket.sql', 'utf8');
+
+                    conn.query(sql, (err) => {
+                        if (err) throw err;
+                        console.log(`Database "${dbName}" created from arlingtonorganicmarket.sql`);
+                        Database.use(() => {
+                            Database.createViews();
+                        });
+                    });
+                }
             }
-          );
+        );
     }
 
-    createViews() {
-        const sql = fs.readFileSync('arlingtonorganicmarket.sql', 'utf8');
-        this.connection.query(sql, (err, results) => {
+    static use(callback) {
+        const conn = Database.connection;
+        conn.query(`USE ${Database.dbName}`, (err) => {
+            if (err) throw err;
+            console.log("Using db!");
+            if (callback) callback();
+        });
+    }
+
+    static createViews() {
+        const conn = Database.connection;
+        const sql = fs.readFileSync('views.sql', 'utf8');
+        conn.query(sql, (err) => {
             if (err) throw err;
             console.log(`Views created from views.sql`);
         });
     }
 
-    use() {
-        this.connection.query(
-            'USE ' + this.dbName, (err, results) => {
-                if (err) throw err;
-                console.log("Using db!");
-            }
-        );
-    }
-
-    resetPromise() {
+    static resetPromise() {
+        const conn = Database.connection;
         return new Promise((resolve, reject) => {
-            this.connection.query("DROP DATABASE " + this.dbName, function (err, result) {
+            conn.query(`DROP DATABASE ${Database.dbName}`, (err) => {
                 if (err) return reject(err);
-                this.init();
+                Database.init();
+                resolve();
             });
         });
     }
 
-    getTablePromise(table) {
+    static getTablePromise(table) {
+        const conn = Database.connection;
         return new Promise((resolve, reject) => {
-            this.connection.query("SELECT * FROM " + table, function (err, result) {
+            conn.query(`SELECT * FROM ${table}`, (err, result) => {
                 if (err) return reject(err);
-                //console.log("Result: ", result);
                 resolve(result);
             });
         });
     }
 
-    getTable(table, callback) {
-        this.getTablePromise(table)
-        .then(result => {
-            callback(null, result);
+    static insertItemPromise(json) {
+        const conn = Database.connection;
+
+        return new Promise((resolve, reject) => {
+            conn.query(
+                "INSERT INTO item (iId, Iname, Sprice, Category) VALUES (?, ?, ?, ?)",
+                [json.id, json.name, json.price, json.category],
+                (err) => {
+                    if (err) return reject(err);
+                    console.log('Item inserted');
+                    resolve();
+                }
+            );
         })
-        .catch(err => {
-            callback(err, null);
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                conn.query(
+                    "INSERT INTO store_item (sId, iId, Scount) VALUES (?, ?, ?)",
+                    [1, json.id, json.quantity],
+                    (err) => {
+                        if (err) return reject(err);
+                        console.log('Item store related');
+                        resolve();
+                    }
+                );
+            });
+        })
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                conn.query(
+                    "INSERT INTO vendor_item (vId, iId) VALUES (?, ?)",
+                    [json.vendor, json.id],
+                    (err) => {
+                        if (err) return reject(err);
+                        console.log('Item vendor related');
+                        resolve();
+                    }
+                );
+            });
         });
     }
 
-    reset(callback) {
-        this.resetPromise()
-        .then(result => {
-            //No need to do anything
-            console.log('Successfully reset database')
-        })
-        .catch(err => {
-            callback(err);
-        })
+    static getTable(table, callback) {
+        Database.getTablePromise(table)
+            .then(result => callback(null, result))
+            .catch(err => callback(err, null));
+    }
+
+    static insertItem(json, callback) {
+        Database.insertItemPromise(json)
+            .then(() => {
+                console.log('Item inserted!');
+                Database.getTable('item', callback);
+            })
+            .catch(err => callback(err, null));
+    }
+
+    static reset(callback) {
+        Database.resetPromise()
+            .then(() => {
+                console.log('Successfully reset database');
+                if (callback) callback(null);
+            })
+            .catch(err => callback(err));
     }
 }
 
