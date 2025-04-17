@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 class Database {
     constructor(connection) {
         this.connection = connection;
@@ -24,7 +26,7 @@ class Database {
                 this.connection.query(sql, (err, results) => {
                   if (err) throw err;
                   console.log(`Database "${this.dbName}" created from arlingtonorganicmarket.sql`);
-                  this.use();
+                  //this.use(); //added to sql already
                   this.createViews();
                 });
               }
@@ -49,6 +51,15 @@ class Database {
         );
     }
 
+    resetPromise() {
+        return new Promise((resolve, reject) => {
+            this.connection.query("DROP DATABASE " + this.dbName, function (err, result) {
+                if (err) return reject(err);
+                this.init();
+            });
+        });
+    }
+
     getTablePromise(table) {
         return new Promise((resolve, reject) => {
             this.connection.query("SELECT * FROM " + table, function (err, result) {
@@ -67,6 +78,17 @@ class Database {
         .catch(err => {
             callback(err, null);
         });
+    }
+
+    reset(callback) {
+        this.resetPromise()
+        .then(result => {
+            //No need to do anything
+            console.log('Successfully reset database')
+        })
+        .catch(err => {
+            callback(err);
+        })
     }
 }
 

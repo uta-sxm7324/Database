@@ -7,9 +7,9 @@
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+-- SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+-- START TRANSACTION;
+-- SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -26,6 +26,9 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `customer`
 --
+
+CREATE DATABASE arlingtonorganicmarket;
+USE arlingtonorganicmarket;
 
 CREATE TABLE `customer` (
   `cId` int(11) NOT NULL,
@@ -710,20 +713,6 @@ INSERT INTO `vendor_store` (`vId`, `sId`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `_order`
---
-
-CREATE TABLE `_order` (
-  `oId` int(11) NOT NULL,
-  `Odate` date DEFAULT NULL,
-  `Ddate` date DEFAULT NULL,
-  `Amount` decimal(20,2) DEFAULT NULL,
-  `cId` int(11) NOT NULL,
-  `sId` int(11) NOT NULL,
-  `iId` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
 -- Indexes for dumped tables
 --
 
@@ -808,15 +797,6 @@ ALTER TABLE `vendor_store`
   ADD KEY `sId` (`sId`);
 
 --
--- Indexes for table `_order`
---
-ALTER TABLE `_order`
-  ADD PRIMARY KEY (`oId`),
-  ADD KEY `sId` (`sId`),
-  ADD KEY `iId` (`iId`),
-  ADD KEY `cId` (`cId`);
-
---
 -- Constraints for dumped tables
 --
 
@@ -873,15 +853,6 @@ ALTER TABLE `vendor_item`
 ALTER TABLE `vendor_store`
   ADD CONSTRAINT `vendor_store_ibfk_1` FOREIGN KEY (`sId`) REFERENCES `store` (`sId`),
   ADD CONSTRAINT `vendor_store_ibfk_2` FOREIGN KEY (`vId`) REFERENCES `vendor` (`vId`);
-
---
--- Constraints for table `_order`
---
-ALTER TABLE `_order`
-  ADD CONSTRAINT `_order_ibfk_1` FOREIGN KEY (`sId`) REFERENCES `store` (`sId`),
-  ADD CONSTRAINT `_order_ibfk_2` FOREIGN KEY (`iId`) REFERENCES `item` (`iId`),
-  ADD CONSTRAINT `_order_ibfk_3` FOREIGN KEY (`cId`) REFERENCES `customer` (`cId`);
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

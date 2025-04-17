@@ -7,8 +7,9 @@ const { Server } = require('socket.io');
 const Database = require('./Database');
 
 const con = mysql.createConnection({
-    host: "localhost:3306",
+    host: "localhost",
     user: "server",
+    multipleStatements: true //bad practice
     //password: "yourpassword" //No password :)
 });
 
@@ -38,6 +39,13 @@ io.on('connection', (socket) => {
         });
         
     });
+
+    socket.on('reset', () => {
+        //Drop the database :)
+        db.reset((err) => {
+            if (err) return console.log(err);
+        });
+    })
   
     socket.on('disconnect', () => {
       console.log('User disconnected:', socket.id);
