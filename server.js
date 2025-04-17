@@ -21,3 +21,7 @@ db.init();
 
 // Web serving
 app.use(express.static(__dirname + '/public'));
+
+app.listen(8100, () => {
+    console.log('Listening at http://localhost:8100/');
+});
