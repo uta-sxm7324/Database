@@ -90,6 +90,19 @@ io.on('connection', (socket) => {
         })
     });
 
+    socket.on('topk', (json) => {
+        Database.topk(json, (err, data) => {
+            if (err) {
+                //Bad data (most likely duplicate id)
+                socket.emit('err', 'topk', err);
+            } else {
+                console.log('Fetched top k');
+                socket.emit('success', 'topk');
+                socket.emit('data','topk',data);
+            }
+        })
+    })
+
     socket.on('updatePrice', (json) => {
         console.log('Updating price...');
         Database.updatePrice(json, (err) => {

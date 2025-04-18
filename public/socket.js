@@ -44,3 +44,7 @@ function sendUpdatePrice(json) {
 function sendDeleteItem(json) {
     socket.emit('deleteItem', json);
 }
+
+function sendFetch(json) {
+    socket.emit('topk', json);
+}

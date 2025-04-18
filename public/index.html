@@ -45,6 +45,11 @@
       <input type="number" id="delete-id" placeholder="Product ID">
       <button onclick="deleteItem()" >Delete</button>
 
+      <h3>Top Items</h3>
+      <input type="number" id="k" placeholder="How Many">
+      <button onclick="fetchTopK()" >View</button>
+      <div id="topk"></div>
+
       <h3>Product List</h3>
       <ul id="productList"></ul>
 

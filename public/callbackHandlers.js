@@ -100,6 +100,21 @@ function deleteItem() {
   });
 }
 
+function fetchTopK() {
+  const k = document.getElementById("k").value.trim();
+  
+  if (!k) {
+      alert("Please fill out all price update fields.");
+      return;
+  }
+
+  console.log('Fetching top K');
+
+  sendFetch({
+      k: k
+  });
+}
+
 function toggleTable(id) {
   const table = document.getElementById(id);
   if (!table) {

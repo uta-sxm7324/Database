@@ -91,6 +91,18 @@ class Database {
         });
     }
 
+    // { k: k }
+
+    static getTopKPromise(json) {
+        const conn = Database.connection;
+        return new Promise((resolve, reject) => {
+            conn.query(`SELECT Iname AS Name, TotalRevenue FROM ItemSalesSummary ORDER BY TotalRevenue DESC LIMIT ?`, [+json.k], (err, result) => {
+                if (err) return reject(err);
+                resolve(result);
+            });
+        });
+    }
+
     /* VENDOR json
     {
         vendorId: vendorId,
@@ -350,6 +362,17 @@ class Database {
         Database.getStorePromise(id)
             .then((data) => {
                 console.log('Store promise success');
+                callback(null, data);
+            })
+            .catch(err => {
+                callback(err, null);
+            });
+    }
+
+    static topk(json, callback) {
+        Database.getTopKPromise(json)
+            .then((data) => {
+                console.log('Top K promise success');
                 callback(null, data);
             })
             .catch(err => {
