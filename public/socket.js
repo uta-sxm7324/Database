@@ -5,15 +5,16 @@ socket.on('data', function (table, data) {
     loadData(table, data);
 });
 
-socket.on('itemError', function (err) {
+socket.on('err', (type, err) => {
+    console.log('There was an error processing ', type);
     console.log(err);
-    //Probably a duplicate item id
-    alert('Oops! There was an issue inserting your item.');
-});
+})
 
-socket.on('itemSuccess', function () {
+socket.on('success', function (type) {
+    console.log(type + ' succeeded');
     alert('Success!');
 });
+
 
 window.onload = function () {
     console.log("Page loaded");
@@ -34,4 +35,12 @@ function sendNewVendor(json) {
 
 function fetchStoreOne() {
     socket.emit('fetchStoreOne');
+}
+
+function sendUpdatePrice(json) {
+    socket.emit('updatePrice', json);
+}
+
+function sendDeleteItem(json) {
+    socket.emit('deleteItem', json);
 }

@@ -66,6 +66,40 @@ function addProduct() {
     });
 }
 
+function updateProduct() {
+  const itemId = document.getElementById("item-id").value.trim();
+  const itemPrice = document.getElementById("item-price").value.trim();
+  const oid = document.getElementById("item-oid").value.trim();
+
+  if (!itemId || !itemPrice || !oid) {
+      alert("Please fill out all price update fields.");
+      return;
+  }
+
+  console.log('Updating price');
+
+  sendUpdatePrice({
+      oid: oid,
+      itemId: itemId,
+      itemPrice: itemPrice
+  });
+}
+
+function deleteItem() {
+  const itemId = document.getElementById("delete-id").value.trim();
+  
+  if (!itemId) {
+      alert("Please fill out all price update fields.");
+      return;
+  }
+
+  console.log('Deleting item');
+
+  sendDeleteItem({
+      itemId: itemId
+  });
+}
+
 function toggleTable(id) {
   const table = document.getElementById(id);
   if (!table) {

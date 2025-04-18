@@ -53,11 +53,11 @@ io.on('connection', (socket) => {
         Database.insertItem(json, (err, data) => {
             if (err) {
                 //Bad data (most likely duplicate item)
-                socket.emit('itemError', err);
+                socket.emit('err', 'item', err);
 
             } else {
                 console.log('Added item');
-                socket.emit('itemSuccess');
+                socket.emit('success', 'item');
                 socket.emit('data','item',data);
             }
         })
@@ -67,11 +67,11 @@ io.on('connection', (socket) => {
         Database.insertVendor(json, (err, data) => {
             if (err) {
                 //Bad data (most likely duplicate id)
-                socket.emit('vendorError', err);
+                socket.emit('err', 'vendor', err);
 
             } else {
                 console.log('Added vendor');
-                socket.emit('vendorSuccess');
+                socket.emit('success', 'vendor');
                 socket.emit('data','vendor',data);
             }
         })
@@ -81,11 +81,41 @@ io.on('connection', (socket) => {
         Database.getStore(1, (err, data) => {
             if (err) {
                 //Bad data (most likely duplicate id)
-                socket.emit('fetchStoreError', err);
+                socket.emit('err', 'store', err);
             } else {
                 console.log('Fetched store');
-                socket.emit('fetchStoreSuccess');
+                socket.emit('success', 'store');
                 socket.emit('data','store',data);
+            }
+        })
+    });
+
+    socket.on('updatePrice', (json) => {
+        console.log('Updating price...');
+        Database.updatePrice(json, (err) => {
+            if (err) {
+                //Bad data (most likely invalid id)
+                socket.emit('err', 'price', err);
+                console.log(err);
+            } else {
+                console.log('Updated price');
+                socket.emit('success', 'price');
+                sendAll(socket);
+            }
+        })
+    })
+
+    socket.on('deleteItem', (json) => {
+        console.log('Deleting item...');
+        Database.deleteItem(json, (err) => {
+            if (err) {
+                //Bad data (most likely invalid id)
+                socket.emit('err', 'delete', err);
+
+            } else {
+                console.log('Deleted Item');
+                socket.emit('success', 'delete');
+                sendAll(socket);
             }
         })
     })

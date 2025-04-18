@@ -35,6 +35,16 @@
       <button onclick="toggleTable('store')">View List</button>
       <div id="store" style="display: none;"></div>
 
+      <h3>Update Price</h3>
+      <input type="number" id="item-id" placeholder="Product ID">
+      <input type="number" id="item-oid" placeholder="Oldprice ID (27)">
+      <input type="number" id="item-price" placeholder="New Price">
+      <button onclick="updateProduct()" >Update Price</button>
+
+      <h3>Delete Item</h3>
+      <input type="number" id="delete-id" placeholder="Product ID">
+      <button onclick="deleteItem()" >Delete</button>
+
       <h3>Product List</h3>
       <ul id="productList"></ul>
 

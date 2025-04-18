@@ -101,13 +101,13 @@ class Database {
         vendorZip: vendorZip
     }
     */
-    static insertItemPromise(json) {
+    static insertVendorPromise(json) {
         const conn = Database.connection;
 
         return new Promise((resolve, reject) => {
             conn.query(
                 "INSERT INTO vendor (vId, Vname, Street, City, StateAb, ZipCode) VALUES (?, ?, ?, ?, ?, ?)",
-                [json.vendorId, json.vendorName, json.vendorStreet, json.vendorState, json.vendorZip],
+                [json.vendorId, json.vendorName, json.vendorStreet, json.vendorCity, json.vendorState, json.vendorZip],
                 (err) => {
                     if (err) return reject(err);
                     console.log('Vendor inserted');
@@ -172,6 +172,138 @@ class Database {
         });
     }
 
+    /* ITEM PRICE UPDATE json
+    {
+      oid: oid
+      itemId: itemId,
+      itemPrice: itemPrice
+    }
+    */
+
+    static updatePricePromise(json) {
+        const conn = Database.connection;
+        //First, add to oldprice
+        return new Promise((resolve, reject) => {
+            conn.query(
+                "INSERT INTO OLDPRICE (iId, oId, Sprice, Sdate) SELECT iId, ?, Sprice, CURRENT_DATE FROM ITEM WHERE iId = ?",
+                [json.oid, json.itemId],
+                (err) => {
+                    if (err) return reject(err);
+                    console.log('oldprice added');
+                    resolve();
+                }
+            );
+        })
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                conn.query(
+                    "UPDATE ITEM SET Sprice = ? WHERE iId = ?",
+                    [json.itemPrice, json.itemId],
+                    (err) => {
+                        if (err) return reject(err);
+                        console.log('item price updated');
+                        resolve();
+                    }
+                );
+            });
+        })
+
+    }
+
+    // {itemId: itemId}
+
+    static deleteItemPromise(json) {
+        const conn = Database.connection;
+
+        return new Promise((resolve, reject) => {
+            conn.query(
+                "DELETE FROM store_item WHERE iId = ?",
+                [json.itemId],
+                (err) => {
+                    if (err) return reject(err);
+                    console.log('store_item deleted');
+                    resolve();
+                }
+            );
+        })
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                conn.query(
+                    "DELETE FROM vendor_item WHERE iId = ?",
+                    [json.itemId],
+                    (err) => {
+                        if (err) return reject(err);
+                        console.log('vendor_item deleted');
+                        resolve();
+                    }
+                );
+            });
+        })
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                conn.query(
+                    "DELETE FROM oldprice WHERE iId = ?",
+                    [json.itemId],
+                    (err) => {
+                        if (err) return reject(err);
+                        console.log('oldprices deleted');
+                        resolve();
+                    }
+                );
+            });
+        })
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                conn.query(
+                    "DELETE FROM order_item WHERE iId = ?",
+                    [json.itemId],
+                    (err) => {
+                        if (err) return reject(err);
+                        console.log('order_item deleted');
+                        resolve();
+                    }
+                );
+            });
+        })
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                conn.query(
+                    "DELETE FROM item WHERE iId = ?",
+                    [json.itemId],
+                    (err) => {
+                        if (err) return reject(err);
+                        console.log('item deleted');
+                        resolve();
+                    }
+                );
+            });
+        })
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                conn.query(
+                    "DELETE FROM vendor_store WHERE vId NOT IN (SELECT vId FROM vendor_item)",
+                    (err) => {
+                        if (err) return reject(err);
+                        console.log('vendor_store deleted');
+                        resolve();
+                    }
+                );
+            });
+        })
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                conn.query(
+                    "DELETE FROM vendor WHERE vId NOT IN (SELECT vId FROM vendor_item)",
+                    (err) => {
+                        if (err) return reject(err);
+                        console.log('vendor deleted');
+                        resolve();
+                    }
+                );
+            });
+        });
+    }
+
     static getTable(table, callback) {
         Database.getTablePromise(table)
             .then(result => callback(null, result))
@@ -183,6 +315,24 @@ class Database {
             .then(() => {
                 console.log('Item inserted!');
                 Database.getTable('item', callback);
+            })
+            .catch(err => callback(err, null));
+    }
+
+    static updatePrice(json, callback) {
+        Database.updatePricePromise(json)
+            .then(() => {
+                console.log('Item Updated!');
+                callback(null);
+            })
+            .catch(err => callback(err, null));
+    }
+
+    static deleteItem(json, callback) {
+        Database.deleteItemPromise(json)
+            .then(() => {
+                console.log('Item deleted!');
+                callback(null);
             })
             .catch(err => callback(err, null));
     }
