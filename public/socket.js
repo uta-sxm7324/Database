@@ -48,3 +48,19 @@ function sendDeleteItem(json) {
 function sendFetch(json) {
     socket.emit('topk', json);
 }
+
+function sendTotalRevenue() {
+    socket.emit('totalRevenue');
+}
+
+function sendFetchMoreThan(json) {
+    socket.emit('moreThan', json);
+}
+
+function sendFetchHighestLoyalty() {
+    socket.emit('highestLoyalty');
+}
+
+function sendLoyaltyBetween(json) {
+    socket.emit('loyaltyBetween', json);
+}

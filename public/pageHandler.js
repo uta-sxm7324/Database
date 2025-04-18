@@ -32,5 +32,6 @@ function loadData(table, data) {
         return;
     }
     // Table exists, fill it with data
+    console.log(table);
     tableDiv.innerHTML = createTable(data);
 }

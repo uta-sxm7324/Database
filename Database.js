@@ -103,6 +103,54 @@ class Database {
         });
     }
 
+    // no json
+
+    static getTotalRevenuePromise() {
+        const conn = Database.connection;
+        return new Promise((resolve, reject) => {
+            conn.query(`SELECT sum(TotalRevenue) FROM ItemSalesSummarySELECT sum(TotalRevenue) AS TotalRevenue FROM ItemSalesSummary`, (err, result) => {
+                if (err) return reject(err);
+                resolve(result);
+            });
+        });
+    }
+
+    // { morethan: moreThan }
+
+    static getMoreThanPromise(json) {
+        const conn = Database.connection;
+        return new Promise((resolve, reject) => {
+            conn.query(`SELECT Iname AS Name, TotalQuantitySold FROM ItemSalesSummary WHERE TotalQuantitySold > ?`, [+json.moreThan], (err, result) => {
+                if (err) return reject(err);
+                resolve(result);
+            });
+        });
+    }
+
+    // no json
+
+    static getHighestLoyaltyPromise() {
+        const conn = Database.connection;
+        return new Promise((resolve, reject) => {
+            conn.query(`SELECT Cname AS Name, LoyaltyScore FROM TopLoyalCustomers ORDER BY LoyaltyScore DESC LIMIT 1`, (err, result) => {
+                if (err) return reject(err);
+                resolve(result);
+            });
+        });
+    }
+
+    // { low: low, high: high }
+
+    static getLoyaltyBetweenPromise(json) {
+        const conn = Database.connection;
+        return new Promise((resolve, reject) => {
+            conn.query(`SELECT Cname AS Name, LoyaltyScore FROM TopLoyalCustomers WHERE LoyaltyScore >= ? AND LoyaltyScore <= ?`, [json.low, json.high], (err, result) => {
+                if (err) return reject(err);
+                resolve(result);
+            });
+        });
+    }
+
     /* VENDOR json
     {
         vendorId: vendorId,
@@ -373,6 +421,50 @@ class Database {
         Database.getTopKPromise(json)
             .then((data) => {
                 console.log('Top K promise success');
+                callback(null, data);
+            })
+            .catch(err => {
+                callback(err, null);
+            });
+    }
+
+    static totalRevenue(callback) {
+        Database.getTotalRevenuePromise()
+            .then((data) => {
+                console.log('Total revenue promise success');
+                callback(null, data);
+            })
+            .catch(err => {
+                callback(err, null);
+            });
+    }
+
+    static moreThan(json, callback) {
+        Database.getMoreThanPromise(json)
+            .then((data) => {
+                console.log('More than promise success');
+                callback(null, data);
+            })
+            .catch(err => {
+                callback(err, null);
+            });
+    }
+
+    static highestLoyalty(callback) {
+        Database.getHighestLoyaltyPromise()
+            .then((data) => {
+                console.log('Highest Loyalty promise success');
+                callback(null, data);
+            })
+            .catch(err => {
+                callback(err, null);
+            });
+    }
+
+    static loyaltyBetween(json, callback) {
+        Database.getLoyaltyBetweenPromise(json)
+            .then((data) => {
+                console.log('Loyalty Between promise success');
                 callback(null, data);
             })
             .catch(err => {

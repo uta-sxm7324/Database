@@ -50,6 +50,25 @@
       <button onclick="fetchTopK()" >View</button>
       <div id="topk"></div>
 
+      <h3>Total Revenue</h3>
+      <button onclick="fetchTotalRevenue()" >View</button>
+      <div id="revenue"></div>
+
+      <h3>Items that Sold More Than</h3>
+      <input type="number" id="moreThanCount" placeholder="How Many">
+      <button onclick="fetchMoreThan()" >View</button>
+      <div id="moreThan"></div>
+    
+      <h3>Highest Loyalty Customer</h3>
+      <button onclick="fetchHighestLoyalty()" >View</button>
+      <div id="highestLoyalty"></div>
+    
+      <h3>Customers With Loyalty Between</h3>
+      <input type="number" id="low" placeholder="Minimum Loyalty">
+      <input type="number" id="high" placeholder="Maximum Loyalty">
+      <button onclick="fetchLoyaltyBetween()" >View</button>
+      <div id="loyaltyBetween"></div>
+
       <h3>Product List</h3>
       <ul id="productList"></ul>
 

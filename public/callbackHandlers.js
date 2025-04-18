@@ -115,6 +115,50 @@ function fetchTopK() {
   });
 }
 
+function fetchtotalRevenue() {
+  console.log('Fetching total rev');
+
+  sendTotalRevenue();
+}
+
+function fetchMoreThan() {
+  const moreThan = document.getElementById("moreThanCount").value.trim();
+  
+  if (!moreThan) {
+      alert("Please fill out all fields.");
+      return;
+  }
+
+  console.log('Fetching more than');
+
+  sendFetchMoreThan({
+      moreThan: moreThan
+  });
+}
+
+function fetchHighestLoyalty() {
+  console.log('Fetching highest loyalty');
+
+  sendFetchHighestLoyalty();
+}
+
+function fetchLoyaltyBetween() {
+  const low = document.getElementById("low").value.trim();
+  const high = document.getElementById("high").value.trim();
+  
+  if (!low || !high) {
+      alert("Please fill out all fields.");
+      return;
+  }
+
+  console.log('Fetching loyalty between');
+
+  sendLoyaltyBetween({
+      low: low,
+      high: high
+  });
+}
+
 function toggleTable(id) {
   const table = document.getElementById(id);
   if (!table) {

@@ -103,6 +103,62 @@ io.on('connection', (socket) => {
         })
     })
 
+    socket.on('totalRevenue', () => {
+        const type = 'totalRevenue'
+        Database.totalRevenue((err, data) => {
+            if (err) {
+                //Bad data (most likely duplicate id)
+                socket.emit('err', type, err);
+            } else {
+                console.log('Fetched ' + type);
+                socket.emit('success', type);
+                socket.emit('data',type,data);
+            }
+        })
+    })
+
+    socket.on('moreThan', (json) => {
+        const type = 'moreThan'
+        Database.moreThan(json, (err, data) => {
+            if (err) {
+                //Bad data (most likely duplicate id)
+                socket.emit('err', type, err);
+            } else {
+                console.log('Fetched ' + type);
+                socket.emit('success', type);
+                socket.emit('data',type,data);
+            }
+        })
+    })
+
+    socket.on('highestLoyalty', () => {
+        const type = 'highestLoyalty'
+        Database.highestLoyalty((err, data) => {
+            if (err) {
+                //Bad data (most likely duplicate id)
+                socket.emit('err', type, err);
+            } else {
+                console.log('Fetched ' + type);
+                socket.emit('success', type);
+                socket.emit('data',type,data);
+            }
+        })
+    })
+
+    socket.on('loyaltyBetween', (json) => {
+        const type = 'loyaltyBetween'
+        Database.loyaltyBetween(json, (err, data) => {
+            if (err) {
+                //Bad data (most likely duplicate id)
+                socket.emit('err', type, err);
+            } else {
+                console.log('Fetched ' + type);
+                socket.emit('success', type);
+                socket.emit('data',type,data);
+            }
+        })
+    })
+
     socket.on('updatePrice', (json) => {
         console.log('Updating price...');
         Database.updatePrice(json, (err) => {
