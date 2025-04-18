@@ -28,22 +28,25 @@ app.use(express.static(__dirname + '/public'));
 const server = http.createServer(app);
 const io = new Server(server);
 
+function sendAll(socket) {
+    Database.getTable("item", (err, data) => {
+        if (err) return console.log(err);
+        console.log('Sending item data');
+        socket.emit('data','item',data);
+    });
+
+    Database.getTable("vendor", (err, data) => {
+        if (err) return console.log(err);
+        console.log('Sending vendor data');
+        socket.emit('data','vendor',data);
+    });
+}
+
 io.on('connection', (socket) => {
     console.log('New connection:', socket.id);
   
     socket.on('getData', () => {
-        Database.getTable("item", (err, data) => {
-            if (err) return console.log(err);
-            console.log('Sending item data');
-            socket.emit('data','item',data);
-        });
-
-        Database.getTable("vendor", (err, data) => {
-            if (err) return console.log(err);
-            console.log('Sending vendor data');
-            socket.emit('data','vendor',data);
-        });
-        
+        sendAll(socket);
     });
 
     socket.on('newItem', (json) => {
@@ -72,12 +75,26 @@ io.on('connection', (socket) => {
                 socket.emit('data','vendor',data);
             }
         })
+    });
+
+    socket.on('fetchStoreOne', () => {
+        Database.getStore(1, (err, data) => {
+            if (err) {
+                //Bad data (most likely duplicate id)
+                socket.emit('fetchStoreError', err);
+            } else {
+                console.log('Fetched store');
+                socket.emit('fetchStoreSuccess');
+                socket.emit('data','store',data);
+            }
+        })
     })
 
     socket.on('reset', () => {
         //Drop the database :)
         Database.reset((err) => {
             if (err) return console.log(err);
+            sendAll(socket);
         });
     })
   

@@ -8,29 +8,33 @@ class Database {
         const conn = Database.connection;
         const dbName = Database.dbName;
 
-        conn.query(
-            'SHOW DATABASES LIKE ?',
-            [dbName],
-            (err, results) => {
-                if (err) throw err;
+        return new Promise((resolve, reject) => {
+            conn.query(
+                'SHOW DATABASES LIKE ?',
+                [dbName],
+                (err, results) => {
+                    if (err) return reject(err);
 
-                if (results.length > 0) {
-                    console.log(`Database "${dbName}" exists. Using it`);
-                    Database.use();
-                } else {
-                    console.log(`Database "${dbName}" not found. Creating...`);
-                    const sql = fs.readFileSync('arlingtonorganicmarket.sql', 'utf8');
+                    if (results.length > 0) {
+                        console.log(`Database "${dbName}" exists. Using it`);
+                        Database.use();
+                        resolve();
+                    } else {
+                        console.log(`Database "${dbName}" not found. Creating...`);
+                        const sql = fs.readFileSync('arlingtonorganicmarket.sql', 'utf8');
 
-                    conn.query(sql, (err) => {
-                        if (err) throw err;
-                        console.log(`Database "${dbName}" created from arlingtonorganicmarket.sql`);
-                        Database.use(() => {
-                            Database.createViews();
+                        conn.query(sql, (err) => {
+                            if (err) return reject(err);
+                            console.log(`Database "${dbName}" created from arlingtonorganicmarket.sql`);
+                            Database.use(() => {
+                                Database.createViews();
+                                resolve();
+                            });
                         });
-                    });
+                    }
                 }
-            }
-        );
+            );
+        });
     }
 
     static use(callback) {
@@ -56,8 +60,13 @@ class Database {
         return new Promise((resolve, reject) => {
             conn.query(`DROP DATABASE ${Database.dbName}`, (err) => {
                 if (err) return reject(err);
-                Database.init();
-                resolve();
+                Database.init()
+                .then(() => {
+                    resolve();
+                })
+                .catch((err) => {
+                    reject(err);
+                });
             });
         });
     }
@@ -66,6 +75,16 @@ class Database {
         const conn = Database.connection;
         return new Promise((resolve, reject) => {
             conn.query(`SELECT * FROM ${table}`, (err, result) => {
+                if (err) return reject(err);
+                resolve(result);
+            });
+        });
+    }
+
+    static getStorePromise(sId) {
+        const conn = Database.connection;
+        return new Promise((resolve, reject) => {
+            conn.query(`SELECT Iname AS Name, Sprice AS Price, Scount AS Quantity FROM item NATURAL JOIN store_item WHERE sId = ?`, [sId], (err, result) => {
                 if (err) return reject(err);
                 resolve(result);
             });
@@ -175,6 +194,17 @@ class Database {
                 Database.getTable('vendor', callback);
             })
             .catch(err => callback(err, null));
+    }
+
+    static getStore(id, callback) {
+        Database.getStorePromise(id)
+            .then((data) => {
+                console.log('Store promise success');
+                callback(null, data);
+            })
+            .catch(err => {
+                callback(err, null);
+            });
     }
 
     static reset(callback) {

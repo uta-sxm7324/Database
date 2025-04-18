@@ -20,10 +20,18 @@ window.onload = function () {
     socket.emit('getData');
 };
 
+function sendReset() {
+    socket.emit('reset');
+}
+
 function sendNewItem(json) {
     socket.emit('newItem', json);
 }
 
 function sendNewVendor(json) {
     socket.emit('newVendor',json);
+}
+
+function fetchStoreOne() {
+    socket.emit('fetchStoreOne');
 }

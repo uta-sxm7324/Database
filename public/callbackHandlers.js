@@ -65,3 +65,16 @@ function addProduct() {
         vendorZip: vendorZip
     });
 }
+
+function toggleTable(id) {
+  const table = document.getElementById(id);
+  if (!table) {
+    console.log('Table ' + id + ' does not exist');
+    return;
+  }
+  if (table.style.display === 'none') {
+    table.style.display = 'block';
+  } else {
+    table.style.display = 'none';
+  }
+}

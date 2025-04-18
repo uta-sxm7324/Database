@@ -11,6 +11,7 @@
   </head>
   <body>
       <h2>Product Management</h2>
+      <button onclick="sendReset()">Reset DB</button>
       <h3>Add Product</h3>
       <input type="number" id="id" placeholder="Product ID"> 
       <input type="text" id="name" placeholder="Product Name"> 
@@ -29,13 +30,20 @@
       <input type="number" id="vendor-zip" placeholder="ZipCode">
       <button onclick="addVendor()" >Add Vendor</button>
 
+      <h3>View Products at Store 1</h3>
+      <button onclick="fetchStoreOne()">Fetch Data</button>
+      <button onclick="toggleTable('store')">View List</button>
+      <div id="store" style="display: none;"></div>
+
       <h3>Product List</h3>
       <ul id="productList"></ul>
 
       <h3>Items</h3>
-      <div id="item"></div>
+      <button onclick="toggleTable('item')">View List</button>
+      <div id="item" style="display: none;"></div>
       <h3>Vendors</h3>
-      <div id="vendor"></div>
+      <button onclick="toggleTable('vendor')">View List</button>
+      <div id="vendor" style="display: none;"></div>
     </div>
   </body>
 </html>
