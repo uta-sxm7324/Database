@@ -1,3 +1,6 @@
+// Samuel Mach 1002107324
+// Abubakar Kassim 1002158809
+
 function wrapper(open, close) {
     return (inner) => {
         return open + inner + close;

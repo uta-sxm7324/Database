@@ -1,3 +1,6 @@
+// Samuel Mach 1002107324
+// Abubakar Kassim 1002158809
+
 const socket = io();
 
 socket.on('data', function (table, data) {

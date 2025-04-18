@@ -1,3 +1,6 @@
+// Samuel Mach 1002107324
+// Abubakar Kassim 1002158809
+
 function addProduct() {
     const id = document.getElementById("id").value.trim();
     const name = document.getElementById("name").value.trim();
