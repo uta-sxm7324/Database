@@ -111,7 +111,7 @@ class Database {
     static getTotalRevenuePromise() {
         const conn = Database.connection;
         return new Promise((resolve, reject) => {
-            conn.query(`SELECT sum(TotalRevenue) FROM ItemSalesSummary SELECT sum(TotalRevenue) AS TotalRevenue FROM ItemSalesSummary`, (err, result) => {
+            conn.query(`SELECT sum(TotalRevenue) AS TotalRevenue FROM ItemSalesSummary`, (err, result) => {
                 if (err) return reject(err);
                 resolve(result);
             });
