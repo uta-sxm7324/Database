@@ -118,7 +118,7 @@ function fetchTopK() {
   });
 }
 
-function fetchtotalRevenue() {
+function fetchTotalRevenue() {
   console.log('Fetching total rev');
 
   sendTotalRevenue();
